@@ -1,0 +1,17 @@
+{
+  "name": "Kottayam Blooms",
+  "short_name": "KottayamBlooms",
+  "description": "Premium handcrafted flowers & gifts in Kottayam, Kerala. Same‑day delivery & WhatsApp order.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2F4F3E",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
