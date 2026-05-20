@@ -183,9 +183,7 @@ To help Kottayam Blooms:
 
 ---
 
-## ⚠️ Important Note
-This is a **WhatsApp-based enquiry system**, not a payment gateway eCommerce system.  
-It is designed for simplicity, speed, and local business efficiency.
+
 
 ---
 
