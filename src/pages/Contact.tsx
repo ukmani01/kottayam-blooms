@@ -16,7 +16,7 @@ const Contact: React.FC = () => {
         <div className="space-y-5">
           <div className="flex items-center gap-4 p-4 bg-[#f2f7ec] rounded-2xl"><FaWhatsapp className="text-green-600 text-xl" /><div><p className="font-semibold">WhatsApp</p><a href="https://wa.me/918921123759">+91 89211 23759</a></div></div>
           <div className="flex items-center gap-4 p-4 bg-[#f2f7ec] rounded-2xl"><FaPhone className="text-gray-600" /><div><p className="font-semibold">Phone</p><a href="tel:+918921123759">+91 89211 23759</a></div></div>
-          <div className="flex items-center gap-4 p-4 bg-[#f2f7ec] rounded-2xl"><FaMapMarkerAlt /><div><p className="font-semibold">Address</p><p>Kottayam, Kerala</p></div></div>
+          <div className="flex items-center gap-4 p-4 bg-[#f2f7ec] rounded-2xl"><FaMapMarkerAlt /><div><p className="font-semibold">Address</p><p><a href="https://maps.app.goo.gl/vXMbeBgF1JL27Sgr9" >kandathil bildind,manipuzha vysali restaurant and fruitbae,Kottayam, Kerala</a></p></div></div>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="text" placeholder="Name" className="w-full p-3 border rounded-xl" onChange={e => setForm({ ...form, name: e.target.value })} required />
