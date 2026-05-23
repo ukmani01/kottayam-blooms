@@ -115,7 +115,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, cart, onRemove
             {/* Summary strip */}
             <div className="flex items-center justify-between text-[11px] mb-4 px-1">
               <span className="text-[#7a9068]">{cart.length} {cart.length === 1 ? 'item' : 'items'} in enquiry</span>
-              <span className="text-[#5a8a50] font-semibold">🚚 Free above ₹999</span>
+              <span className="text-[#5a8a50] font-semibold">🚚 Free Delivery</span>
             </div>
 
             {/* WhatsApp CTA */}
