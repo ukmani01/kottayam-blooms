@@ -38,7 +38,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
       {/* ── Announcement strip ── */}
       <div className="fixed top-0 inset-x-0 z-50 bg-[#2e3c27] h-9 flex items-center justify-center px-4">
         <p className="text-[10px] tracking-[0.2em] uppercase text-[#b8ccaa] font-medium text-center">
-          🌿&nbsp; Free delivery above ₹999 &nbsp;·&nbsp; Same‑day orders before 5 PM &nbsp;·&nbsp;
+          🌿&nbsp; Free delivery  &nbsp;·&nbsp; Same‑day orders before 5 PM &nbsp;·&nbsp;
           <a href="https://wa.me/918921123759" target="_blank" rel="noreferrer"
             className="underline underline-offset-2 hover:text-white transition-colors">WhatsApp us</a>
         </p>
