@@ -52,18 +52,16 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product, addToCart, onRe
     <article
       className="group relative bg-white rounded-2xl overflow-hidden cursor-pointer"
       style={{
-        transition: 'transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1)',
+        transition: 'transform 0.35s cubic-bezier(0.22,1,0.36,1)',
         transform: hovered ? 'translateY(-6px) scale(1.005)' : 'translateY(0) scale(1)',
-        boxShadow: hovered
-          ? '0 24px 64px rgba(28,28,26,0.13), 0 4px 16px rgba(28,28,26,0.07)'
-          : '0 1px 3px rgba(28,28,26,0.07), 0 0 0 1px rgba(28,28,26,0.055)',
+        // boxShadow completely removed
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => onReadMore(product)}
       aria-label={`View ${product.description}`}
     >
-      {/* ── Image ── */}
+      {/* Image container – fixed 3:4 aspect, no shadow */}
       <div className="relative overflow-hidden bg-[#f0f5ea]" style={{ aspectRatio: '3/4' }}>
         <img
           src={product.image}
@@ -91,11 +89,10 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product, addToCart, onRe
           </div>
         )}
 
-        {/* Wishlist */}
+        {/* Wishlist button – preserved */}
         <button
           onClick={e => { e.stopPropagation(); setWishlisted(w => !w); }}
           className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
-          style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.12)' }}
           aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}>
           <FiHeart
             size={14}
@@ -104,7 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product, addToCart, onRe
           />
         </button>
 
-        {/* Quick-view pill (hover) */}
+        {/* Quick-view pill on hover */}
         <div className="absolute bottom-3 inset-x-3"
           style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(8px)', transition: 'all 0.3s ease' }}>
           <button
@@ -115,20 +112,17 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product, addToCart, onRe
         </div>
       </div>
 
-      {/* ── Body ── */}
+      {/* Body – no shadow, clean */}
       <div className="p-4">
-        {/* Category tag */}
         <div className="inline-flex items-center gap-1.5 mb-2.5">
           <span className="w-3 h-px bg-[#8aaa78]" />
           <span className="text-[9px] font-bold uppercase tracking-[0.22em] text-[#8aaa78]">{product.category}</span>
         </div>
 
-        {/* Title */}
         <h3 className="font-serif font-semibold text-[13.5px] text-[#1c1c1a] line-clamp-2 leading-snug mb-2.5">
           {product.description}
         </h3>
 
-        {/* Stars + review count */}
         <div className="flex items-center gap-2 mb-3.5">
           <Stars rating={product.rating ?? 4.5} />
           <span className="text-[10px] text-[#8aaa78] font-medium">
@@ -136,7 +130,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product, addToCart, onRe
           </span>
         </div>
 
-        {/* Price row */}
         <div className="flex items-center justify-between pt-3 border-t border-[#eaf0e2]">
           <div>
             <div className="text-[12px] font-semibold text-[#2e3c27]">Price on Request</div>
@@ -150,7 +143,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product, addToCart, onRe
               background: added ? '#3a7a3a' : '#2e3c27',
               color: '#ffffff',
               transform: added ? 'scale(0.95)' : 'scale(1)',
-              boxShadow: added ? 'none' : '0 3px 12px rgba(46,60,39,0.25)',
+              // boxShadow removed
             }}
             aria-label="Add to enquiry cart">
             {added
