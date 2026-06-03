@@ -2,11 +2,10 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiSearch, FiX, FiSliders, FiShoppingBag } from 'react-icons/fi';
 import { FaStar, FaStarHalfAlt, FaLeaf } from 'react-icons/fa';
-import ProductCard from '../components/ProductCard';
-import { useDebounce } from '../hooks/useDebounce';
+import ProductCard from "../components/ProductCard";
 import type { Product, CategoryType } from '../types';
 
-/* ── Image Imports ── */
+/* ── Image Imports (unchanged) ── */
 import img0 from '../ok1/img.jpeg';
 import img1 from '../ok1/img15.png';
 import img2 from '../ok1/img3.jpg';
@@ -29,10 +28,13 @@ import whitewedding from "../ok1/white-chrysanthemums,.png";
 import sympothimage from "../ok1/Gemini_Generated_Image_b5xfkbb5xfkbb5xf.jpg";
 import sypothimage2 from "../ok1/Gemini_Generated_Image_waxrf5waxrf5waxr.jpg";
 
-interface HomeProps {
-  addToCart: (product: Product) => void;
-  setCount: React.Dispatch<React.SetStateAction<number>>;
-  count: number;
+function useDebounce(value: string, delay: number) {
+  const [debounced, setDebounced] = useState(value);
+  React.useEffect(() => {
+    const handler = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debounced;
 }
 
 const PRODUCTS: Product[] = [
@@ -51,7 +53,6 @@ const PRODUCTS: Product[] = [
   { id: 12, price: 0, image: img12, description: 'Premium Pink Rose bouquet with baby\'s breath', category: 'Roses', rating: 4.5, reviewCount: 112 },
   { id: 13, price: 0, image: img13, description: 'Gift combo with roses and chocolates', category: 'Gifts', badge: 'Combo', rating: 4.8, reviewCount: 678 },
   { id: 14, price: 0, image: img14, description: 'Red Rose and Dairy Milk chocolate basket', category: 'Gifts', badge: 'Wedding Special', rating: 4.9, reviewCount: 456 },
-  /* Newly added products from your imports */
   { id: 15, price: 0, image: pyramid, description: 'Loving Memory Pyramid Floral Tribute - Mixed Roses', category: 'Sympathy', rating: 4.8, reviewCount: 156 },
   { id: 16, price: 0, image: white, description: 'Elegance White Wreath with Pink Cross arrangement', category: 'Sympathy', badge: 'Custom', rating: 4.9, reviewCount: 210 },
   { id: 17, price: 0, image: dense, description: 'Serenity Rose and Lily Casket Sprays', category: 'Sympathy', rating: 4.7, reviewCount: 184 },
@@ -64,28 +65,19 @@ const CATEGORIES: CategoryType[] = ['All', 'Roses', 'Wedding', 'Birthday', 'Gift
 const SORT_OPTIONS = [
   { value: 'rating', label: 'Top Rated' },
   { value: 'popular', label: 'Most Popular' },
-  { value: 'newest', label: 'Newest First' },
 ];
 
-/* ── Skeleton ── */
-const Skeleton = () => (
-  <div className="rounded-2xl overflow-hidden bg-white" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-    <div className="bg-[#eaf0e2] animate-pulse" style={{ aspectRatio: '3/4' }} />
-    <div className="p-4 space-y-2.5">
-      <div className="h-2.5 bg-[#eaf0e2] rounded-full w-1/4 animate-pulse" />
-      <div className="h-3.5 bg-[#eaf0e2] rounded-full w-3/4 animate-pulse" />
-      <div className="h-3.5 bg-[#eaf0e2] rounded-full w-1/2 animate-pulse" />
-      <div className="h-8 bg-[#eaf0e2] rounded-xl mt-4 animate-pulse" />
-    </div>
-  </div>
-);
+interface HomeProps {
+  addToCart: (product: Product) => void;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  count: number;
+}
 
-const Home: React.FC<HomeProps> = ({ addToCart }) => {
+const Home: React.FC<HomeProps> = ({ addToCart, setCount }) => {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<CategoryType>('All');
   const [sortBy, setSortBy] = useState('rating');
   const [selectedProduct, setSelected] = useState<Product | null>(null);
-  const [loading] = useState(false);
 
   const debouncedSearch = useDebounce(search, 280);
 
@@ -100,48 +92,96 @@ const Home: React.FC<HomeProps> = ({ addToCart }) => {
     return r;
   }, [debouncedSearch, activeFilter, sortBy]);
 
-  const handleAdd = useCallback((p: Product) => { addToCart(p); }, [addToCart]);
+  const handleAdd = useCallback((product: Product) => {
+    addToCart(product);
+    setCount(prev => prev + 1);
+  }, [addToCart, setCount]);
+
+  const isFilterActive = search !== '' || activeFilter !== 'All';
+  const clearAllFilters = () => {
+    setSearch('');
+    setActiveFilter('All');
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-5 lg:px-8 py-10">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-8">
-        <div className="flex items-center gap-2 flex-wrap">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveFilter(cat)}
-              className="px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-200"
-              style={activeFilter === cat
-                ? { background: '#2e3c27', color: '#fff', boxShadow: '0 3px 12px rgba(46,60,39,0.28)' }
-                : { background: '#eaf0e2', color: '#445038' }
-              }>
-              {cat}
-            </button>
-          ))}
-        </div>
+    <div className="max-w-7xl mx-auto px-1 sm:px-5 lg:px-8 py-6 md:py-10">
+      {/* Filter bar */}
+      <div className="mb-6">
+        <div className="flex flex-col gap-4">
+          {/* Category filters */}
+          <div className="relative w-full overflow-x-auto md:overflow-visible scrollbar-hide pb-2 -mb-2">
+            <div className="flex gap-2 min-w-max md:min-w-0 md:flex-wrap md:justify-start">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  aria-label={`Filter by ${cat}`}
+                  className={`
+                    px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap
+                    hover:scale-105 active:scale-95 transform
+                    ${activeFilter === cat
+                      // ↓ Active: added ring-2 ring-emerald-200/70 ring-offset-1
+                      ? 'bg-[#2e3c27] text-white shadow-md shadow-black/5 ring-2 ring-emerald-200/70 ring-offset-1'
+                      : 'bg-[#eaf0e2] text-[#445038] hover:bg-[#dfe8d6]'
+                    }
+                  `}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <FiSliders size={14} className="text-[#8aaa78]" />
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-            className="text-[12px] font-semibold text-[#2e3c27] bg-[#eaf0e2] border-0 rounded-xl px-3 py-2 focus:outline-none cursor-pointer appearance-none pr-7"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238aaa78' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}>
-            {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
+          {/* Second row: sort + clear filters */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <FiSliders size={14} className="text-[#8aaa78]" />
+              {/* ↓ Increased padding to py-2.5 px-4, added hover:bg-[#dfe8d6] transition-colors */}
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                aria-label="Sort products by"
+                className="text-[12px] font-semibold text-[#2e3c27] bg-[#eaf0e2] border-0 rounded-xl py-2.5 px-4 focus:outline-none cursor-pointer appearance-none pr-8 min-h-[38px] hover:bg-[#dfe8d6] transition-colors"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238aaa78' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 10px center'
+                }}
+              >
+                {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+
+            {isFilterActive && (
+              <button
+                onClick={clearAllFilters}
+                className="text-xs font-medium text-[#8aaa78] hover:text-[#2e3c27] transition-colors flex items-center gap-1"
+                aria-label="Clear all filters and search"
+              >
+                <FiX size={12} /> Clear all filters
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="relative max-w-md mb-6">
+      {/* Search Bar */}
+      <div className="relative max-w-md mb-5">
         <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8aaa78]" />
+        {/* ↓ Added focus:ring-2 focus:ring-emerald-200 focus:border-transparent */}
         <input
-          type="text" placeholder="Search arrangements…"
-          value={search} onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-9 py-2.5 bg-[#eaf0e2] border border-transparent rounded-xl text-[13px] text-[#1c1c1a] placeholder-[#8aaa78] focus:outline-none focus:bg-white focus:border-[#b0c8a0] transition-all"
+          type="text"
+          placeholder="Search arrangements…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full pl-9 pr-9 py-2.5 bg-[#eaf0e2] border border-transparent rounded-xl text-[13px] text-[#1c1c1a] placeholder-[#8aaa78] focus:outline-none focus:bg-white focus:border-transparent focus:ring-2 focus:ring-emerald-200 transition-all"
         />
         {search && (
-          <button onClick={() => setSearch('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8aaa78] hover:text-[#2e3c27] transition-colors">
+          // ↓ Added hover:scale-110 hover:text-emerald-700 transition
+          <button
+            onClick={() => setSearch('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8aaa78] hover:text-emerald-700 hover:scale-110 transition-all"
+          >
             <FiX size={14} />
           </button>
         )}
@@ -151,34 +191,40 @@ const Home: React.FC<HomeProps> = ({ addToCart }) => {
         Showing <span className="text-[#2e3c27] font-bold">{filtered.length}</span> of <span className="text-[#2e3c27] font-bold">{PRODUCTS.length}</span> arrangements
       </p>
 
-      {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
-          {[...Array(8)].map((_, i) => <Skeleton key={i} />)}
-        </div>
-      ) : filtered.length === 0 ? (
+      {/* Product Grid */}
+      {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <FaLeaf className="text-5xl text-[#c8d8b8] mb-4" />
           <p className="font-serif font-semibold text-[18px] text-[#3a3830] mb-1">No results found</p>
           <p className="text-[13px] text-[#8aaa78]">Try a different search or browse all flowers</p>
-          <button onClick={() => { setSearch(''); setActiveFilter('All'); }}
-            className="mt-6 px-6 py-2.5 bg-[#2e3c27] text-white text-[12px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#233020] transition-all">
+          <button
+            onClick={clearAllFilters}
+            className="mt-6 px-6 py-2.5 bg-[#2e3c27] text-white text-[12px] font-bold uppercase tracking-wider rounded-xl active:scale-95 transition-all"
+          >
             Clear Filters
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-5 stagger-grid">
+        // ↓ Updated gap to gap-5 on md: and above
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-5">
           {filtered.map((product, idx) => (
-            <ProductCard
+            // ↓ Wrapper div for hover lift + shadow if ProductCard cannot be edited directly
+            <div
               key={product.id}
-              product={product}
-              index={idx}
-              addToCart={handleAdd}
-              onReadMore={setSelected}
-            />
+              className="transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl rounded-xl overflow-hidden"
+            >
+              <ProductCard
+                product={product}
+                index={idx}
+                addToCart={handleAdd}
+                onReadMore={setSelected}
+              />
+            </div>
           ))}
         </div>
       )}
 
+      {/* Quick View Modal */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div
@@ -187,34 +233,46 @@ const Home: React.FC<HomeProps> = ({ addToCart }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-            style={{ background: 'rgba(28,28,26,0.6)', backdropFilter: 'blur(6px)' }}
-            onClick={() => setSelected(null)}>
+            // ↓ backdrop-blur-md, darker bg-black/60
+            style={{ background: 'rgba(28,28,26,0.6)', backdropFilter: 'blur(12px)' }}
+            onClick={() => setSelected(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Product quick view"
+          >
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 40 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-white w-full sm:max-w-md sm:rounded-3xl overflow-hidden rounded-t-3xl"
-              style={{ boxShadow: '0 32px 80px rgba(0,0,0,0.22)' }}
-              onClick={e => e.stopPropagation()}>
-              <div className="relative h-64 sm:h-72 overflow-hidden bg-[#f0f5ea]">
-                <img src={selectedProduct.image} alt={selectedProduct.description}
-                  className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1a]/50 to-transparent" />
-                <button onClick={() => setSelected(null)}
-                  className="absolute top-4 right-4 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
+              // ↓ Added shadow-2xl and border border-white/20
+              className="bg-white w-full sm:max-w-md sm:rounded-3xl overflow-hidden rounded-t-3xl shadow-2xl border border-white/20"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="relative aspect-[4/3] bg-[#f8faf4] overflow-hidden">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.description}
+                  className="w-full h-full object-cover bg-[#fafaf5]"
+                />
+                {/* ↓ Added hover:bg-black/5 transition to close button */}
+                <button
+                  onClick={() => setSelected(null)}
+                  className="absolute top-4 right-4 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/5 transition-all"
+                  aria-label="Close quick view"
+                >
                   <FiX size={16} className="text-[#2e3c27]" />
                 </button>
               </div>
-              <div className="p-6">
+              <div className="p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-5 h-px bg-[#8aaa78]" />
                   <span className="text-[9px] font-bold uppercase tracking-[0.22em] text-[#8aaa78]">{selectedProduct.category}</span>
                 </div>
-                <h3 className="font-serif font-bold text-[18px] text-[#1c1c1a] leading-snug mb-3">
+                <h3 className="font-serif font-bold text-xl text-[#1c1c1a] leading-snug mb-3">
                   {selectedProduct.description}
                 </h3>
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center gap-0.5">
                     {[...Array(4)].map((_, i) => <FaStar key={i} className="text-[#c49a3c] text-sm" />)}
                     <FaStarHalfAlt className="text-[#c49a3c] text-sm" />
@@ -224,12 +282,18 @@ const Home: React.FC<HomeProps> = ({ addToCart }) => {
                 <p className="text-[13px] text-[#6a7a60] leading-relaxed mb-6">
                   Custom pricing available. Contact us for the best price based on your occasion and flower availability.
                 </p>
-                <button
-                  onClick={() => { addToCart(selectedProduct); setSelected(null); }}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-[13px] uppercase tracking-wider text-white transition-all hover:scale-[1.01] active:scale-[0.97]"
-                  style={{ background: '#2e3c27', boxShadow: '0 6px 24px rgba(46,60,39,0.28)' }}>
-                  <FiShoppingBag size={16} /> Add to Enquiry Cart
-                </button>
+                {/* ↓ border-t border-neutral-100 above button, hover:bg-[#1f2c1a] focus:ring-2 */}
+                <div className="border-t border-neutral-100 pt-4">
+                  <button
+                    onClick={() => { handleAdd(selectedProduct); setSelected(null); }}
+                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-[13px] uppercase tracking-wider text-white transition-all active:scale-[0.98] focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 hover:opacity-90"
+                    style={{ background: '#2e3c27' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#1f2c1a')}
+                    onMouseLeave={e => (e.currentTarget.style.background = '#2e3c27')}
+                  >
+                    <FiShoppingBag size={16} /> Add to Enquiry Cart
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
