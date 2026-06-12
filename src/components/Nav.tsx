@@ -59,7 +59,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
             <FiMenu size={20} className="text-[#2e3c27]" />
           </button>
 
-          {/* Logo + Associates */}
+          {/* Logo + Associates + Premium line */}
           <Link to="/" className="flex-shrink-0 group">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-[#2e3c27] flex items-center justify-center flex-shrink-0">
@@ -72,13 +72,14 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
                 <div className="font-serif text-[16px] font-bold tracking-tight text-[#1c1c1a] group-hover:text-[#2e3c27] transition-colors leading-none">
                   Kottayam Blooms
                 </div>
-                <div className="text-[8px] tracking-[0.26em] uppercase text-[#7a9068] mt-0.5 leading-none">
-                  Premium Florals · Kerala
-                </div>
-                {/* Our Associates line – short, clean, responsive */}
-                <div className="text-[7px] text-[#9bb58c] mt-1 flex items-center gap-1 leading-tight whitespace-nowrap sm:whitespace-normal">
-                  <span className="inline-block w-1 h-1 rounded-full bg-[#b8ccaa]"></span>
+                {/* Our Associates line – larger, readable */}
+                <div className="text-[10px] sm:text-[11px] font-medium text-[#2e3c27] mt-1 flex items-center gap-1 leading-tight">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa]"></span>
                   <span className="truncate">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
+                </div>
+                {/* Premium Florals line – smaller */}
+                <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-0.5 leading-none">
+                  Premium Florals · Kerala
                 </div>
               </div>
             </div>
@@ -199,11 +200,13 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
           <div className="flex items-center justify-between px-5 py-5 border-b border-[#dce8d0] bg-[#f2f7ec]">
             <div>
               <div className="font-serif text-[15px] font-bold text-[#1c1c1a]">Kottayam Blooms</div>
-              <div className="text-[8.5px] tracking-[0.25em] uppercase text-[#7a9068] mt-0.5">Premium Florals · Kerala</div>
-              {/* Associates line inside drawer for consistency */}
-              <div className="text-[7px] text-[#9bb58c] mt-1 flex items-center gap-1 leading-tight">
-                <span className="inline-block w-1 h-1 rounded-full bg-[#b8ccaa]"></span>
-                <span>Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
+              {/* Associates line in drawer */}
+              <div className="text-[10px] font-medium text-[#2e3c27] mt-1 flex items-center gap-1 leading-tight">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa]"></span>
+                <span className="truncate">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
+              </div>
+              <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-0.5 leading-none">
+                Premium Florals · Kerala
               </div>
             </div>
             <button onClick={() => setDrawerOpen(false)} className="p-2 rounded-xl hover:bg-[#dce8d0] transition-colors">
@@ -255,7 +258,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
             </a>
             <div className="flex items-center justify-center gap-1.5 text-[10px] text-[#8aaa78]">
               <FiPhone size={10} />
-              <a href="tel:+918921123759" className="hover:text-[#2e3c27} transition-colors">+91 89211 23759</a>
+              <a href="tel:+918921123759" className="hover:text-[#2e3c27] transition-colors">+91 89211 23759</a>
             </div>
           </div>
         </div>
