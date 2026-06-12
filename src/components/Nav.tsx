@@ -15,8 +15,27 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [dropOpen, setDropOpen]     = useState(false);
   const [query, setQuery]           = useState('');
+  const [showFullLogo, setShowFullLogo] = useState(false);
   const navigate  = useNavigate();
   const location  = useLocation();
+
+  // Fix #2: Prevent horizontal overflow on sm/md screens (card section pushed right)
+  useEffect(() => {
+    document.body.style.overflowX = 'hidden';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    return () => {
+      document.body.style.overflowX = '';
+      document.body.style.margin = '';
+      document.body.style.padding = '';
+    };
+  }, []);
+
+  // Fix #3: Animation – show "KB" first, then full name after 0.5s (Marvel style)
+  useEffect(() => {
+    const timer = setTimeout(() => setShowFullLogo(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -69,13 +88,21 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
                 </svg>
               </div>
               <div>
-                <div className="font-serif text-[16px] font-bold tracking-tight text-[#1c1c1a] group-hover:text-[#2e3c27] transition-colors leading-none">
-                  Kottayam Blooms
+                {/* Animated Logo Text */}
+                <div className="font-serif text-[16px] font-bold tracking-tight leading-none">
+                  <div className="relative h-[20px] overflow-hidden">
+                    <div className={`transition-all duration-500 ease-out ${showFullLogo ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}`}>
+                      <span className="text-[#1c1c1a]">KB</span>
+                    </div>
+                    <div className={`absolute top-0 left-0 transition-all duration-500 ease-out ${showFullLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'}`}>
+                      <span className="text-[#1c1c1a] group-hover:text-[#2e3c27] transition-colors">Kottayam Blooms</span>
+                    </div>
+                  </div>
                 </div>
-                {/* Our Associates line – larger, readable */}
-                <div className="text-[10px] sm:text-[11px] font-medium text-[#2e3c27] mt-1 flex items-center gap-1 leading-tight">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa]"></span>
-                  <span className="truncate">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
+                {/* Fix #1: Associates text – wrap to next line, no truncation */}
+                <div className="text-[10px] sm:text-[11px] font-medium text-[#2e3c27] mt-1 flex flex-wrap items-center gap-1 leading-tight max-w-[220px] sm:max-w-none">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa] flex-shrink-0"></span>
+                  <span className="break-words whitespace-normal">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
                 </div>
                 {/* Premium Florals line – smaller */}
                 <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-0.5 leading-none">
@@ -85,7 +112,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
             </div>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop nav (unchanged) */}
           <nav className="hidden lg:flex items-center gap-0.5 ml-4">
             <div className="relative"
               onMouseEnter={() => setDropOpen(true)}
@@ -131,7 +158,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
 
           <div className="flex-1" />
 
-          {/* Right icons */}
+          {/* Right icons (unchanged) */}
           <div className="flex items-center gap-1">
             <button onClick={() => setSearchOpen(s => !s)}
               className={`p-2.5 rounded-xl transition-colors ${searchOpen ? 'bg-[#eaf0e2] text-[#2e3c27]' : 'hover:bg-[#eaf0e2] text-[#445038]'}`}
@@ -149,7 +176,6 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
               <FiUser size={18} />
             </button>
 
-            {/* Cart button */}
             <button onClick={onCartClick}
               className="relative flex items-center gap-2 ml-1 pl-3.5 pr-4.5 pr-5 py-2.5 bg-[#2e3c27] text-white rounded-xl text-[13px] font-semibold hover:bg-[#233020] transition-all hover:scale-[1.02] active:scale-[0.97]"
               style={{ boxShadow: '0 4px 16px rgba(46,60,39,0.3)' }}
@@ -165,7 +191,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
           </div>
         </div>
 
-        {/* Search slide-down */}
+        {/* Search slide-down (unchanged) */}
         <div className={`overflow-hidden transition-all duration-300 ${searchOpen ? 'max-h-20 border-t border-[#dce8d0]' : 'max-h-0'}`}>
           <form onSubmit={handleSearch} className="px-5 lg:px-8 py-3 max-w-xl mx-auto">
             <div className="relative">
@@ -189,7 +215,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
         </div>
       </header>
 
-      {/* ── Mobile drawer ── */}
+      {/* ── Mobile drawer (same fixes applied) ── */}
       <div className={`fixed inset-0 z-50 transition-all duration-300 ${drawerOpen ? 'visible' : 'invisible pointer-events-none'}`}>
         <div className={`absolute inset-0 bg-[#1c1c1a]/40 backdrop-blur-sm transition-opacity duration-300 ${drawerOpen ? 'opacity-100' : 'opacity-0'}`}
           onClick={() => setDrawerOpen(false)} />
@@ -200,10 +226,10 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
           <div className="flex items-center justify-between px-5 py-5 border-b border-[#dce8d0] bg-[#f2f7ec]">
             <div>
               <div className="font-serif text-[15px] font-bold text-[#1c1c1a]">Kottayam Blooms</div>
-              {/* Associates line in drawer */}
-              <div className="text-[10px] font-medium text-[#2e3c27] mt-1 flex items-center gap-1 leading-tight">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa]"></span>
-                <span className="truncate">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
+              {/* Associates line in drawer – wrapped */}
+              <div className="text-[10px] font-medium text-[#2e3c27] mt-1 flex flex-wrap items-center gap-1 leading-tight">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa] flex-shrink-0"></span>
+                <span className="break-words whitespace-normal">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
               </div>
               <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-0.5 leading-none">
                 Premium Florals · Kerala
@@ -214,7 +240,7 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
             </button>
           </div>
 
-          {/* Mobile search */}
+          {/* Mobile search etc. unchanged */}
           <div className="px-4 py-3 border-b border-[#dce8d0]">
             <form onSubmit={handleSearch}>
               <div className="relative">
@@ -269,3 +295,5 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
 
 Nav.displayName = 'Nav';
 export default Nav;
+
+
