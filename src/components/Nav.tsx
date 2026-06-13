@@ -1,5 +1,4 @@
-
-  import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   FiMenu, FiX, FiShoppingBag, FiSearch,
@@ -16,7 +15,6 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [dropOpen, setDropOpen]     = useState(false);
   const [query, setQuery]           = useState('');
-  const [showFullLogo, setShowFullLogo] = useState(false);
   const navigate  = useNavigate();
   const location  = useLocation();
 
@@ -29,11 +27,6 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
       document.body.style.margin = '';
       document.body.style.padding = '';
     };
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowFullLogo(true), 500);
-    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -73,31 +66,24 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
             <FiMenu size={20} className="text-[#2e3c27]" />
           </button>
 
-          {/* Logo container - Updated with items-center for perfect alignment */}
+          {/* Logo container - Updated alignment */}
           <Link to="/" className="flex-shrink-0 group">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#2e3c27] flex items-center justify-center flex-shrink-0">
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 mt-0.5 rounded-xl bg-[#2e3c27] flex items-center justify-center flex-shrink-0">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M8 14C8 14 2 10 2 5.5C2 3.0 4.7 1 8 1C11.3 1 14 3.0 14 5.5C14 10 8 14 8 14Z" fill="#b8ccaa"/>
                   <path d="M8 14V7" stroke="#2e3c27" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
               </div>
               <div>
-                <div className="font-serif text-[16px] font-bold tracking-tight leading-none">
-                  <div className="relative h-[20px] overflow-hidden">
-                    <div className={`transition-all duration-500 ease-out ${showFullLogo ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}`}>
-                      <span className="text-[#1c1c1a]">KB</span>
-                    </div>
-                    <div className={`absolute top-0 left-0 transition-all duration-500 ease-out ${showFullLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'}`}>
-                      <span className="text-[#1c1c1a] group-hover:text-[#2e3c27] transition-colors">Kottayam Blooms</span>
-                    </div>
-                  </div>
+                <div className="font-serif text-[16px] font-bold tracking-tight leading-none text-[#1c1c1a]">
+                  Kottayam Blooms
                 </div>
-                <div className="text-[10px] sm:text-[11px] font-medium text-[#2e3c27] mt-1 flex flex-wrap items-center gap-1 leading-tight max-w-[220px] sm:max-w-none">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa] flex-shrink-0"></span>
-                  <span className="break-words whitespace-normal">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
+                <div className="text-[10px] sm:text-[11px] font-medium text-[#2e3c27] mt-1.5 flex items-center gap-1.5 leading-tight">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#b8ccaa] flex-shrink-0"></span>
+                  <span className="leading-tight">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span>
                 </div>
-                <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-0.5 leading-none">
+                <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-1 leading-none">
                   Premium Florals · Kerala
                 </div>
               </div>
@@ -153,58 +139,10 @@ const Nav: React.FC<NavProps> = memo(({ count, onCartClick }) => {
             </button>
           </div>
         </div>
-        <div className={`overflow-hidden transition-all duration-300 ${searchOpen ? 'max-h-20 border-t border-[#dce8d0]' : 'max-h-0'}`}>
-          <form onSubmit={handleSearch} className="px-5 lg:px-8 py-3 max-w-xl mx-auto">
-            <div className="relative">
-              <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8aaa78]" />
-              <input autoFocus={searchOpen} type="text" placeholder="Search roses, bouquets, wedding flowers…" value={query} onChange={e => setQuery(e.target.value)}
-                className="w-full pl-9 pr-10 py-2.5 bg-[#f0f5ea] border border-transparent rounded-xl text-[13px] text-[#1c1c1a] placeholder-[#8aaa78] focus:outline-none focus:border-[#b0c8a0] focus:bg-white transition-all" />
-              {query && (
-                <button type="button" onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8aaa78] hover:text-[#2e3c27] transition-colors"><FiX size={14} /></button>
-              )}
-            </div>
-          </form>
-        </div>
       </header>
-
-      {/* Mobile drawer (same logic) */}
-      <div className={`fixed inset-0 z-50 transition-all duration-300 ${drawerOpen ? 'visible' : 'invisible pointer-events-none'}`}>
-        <div className={`absolute inset-0 bg-[#1c1c1a]/40 backdrop-blur-sm transition-opacity duration-300 ${drawerOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setDrawerOpen(false)} />
-        <div className={`absolute top-0 left-0 h-full w-[290px] bg-white flex flex-col transition-transform duration-400 ease-out ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`} style={{ boxShadow: '8px 0 48px rgba(0,0,0,0.12)' }}>
-          <div className="flex items-center justify-between px-5 py-5 border-b border-[#dce8d0] bg-[#f2f7ec]">
-            <div>
-              <div className="font-serif text-[15px] font-bold text-[#1c1c1a]">Kottayam Blooms</div>
-              <div className="text-[10px] font-medium text-[#2e3c27] mt-1 flex flex-wrap items-center gap-1 leading-tight"><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b8ccaa] flex-shrink-0"></span><span className="break-words whitespace-normal">Our Associates: Puliyeril Agencies – Flowers & Bouquets, Ferns Petals</span></div>
-              <div className="text-[7px] tracking-[0.2em] uppercase text-[#7a9068] mt-0.5 leading-none">Premium Florals · Kerala</div>
-            </div>
-            <button onClick={() => setDrawerOpen(false)} className="p-2 rounded-xl hover:bg-[#dce8d0] transition-colors"><FiX size={18} className="text-[#445038]" /></button>
-          </div>
-          <div className="px-4 py-3 border-b border-[#dce8d0]">
-            <form onSubmit={handleSearch}><div className="relative"><FiSearch size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8aaa78]" /><input type="text" placeholder="Search flowers…" value={query} onChange={e => setQuery(e.target.value)} className="w-full pl-8 pr-3 py-2.5 bg-[#f0f5ea] rounded-xl text-[13px] text-[#1c1c1a] placeholder-[#8aaa78] focus:outline-none transition-all" /></div></form>
-          </div>
-          <div className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-            {[ { to: '/', label: 'Home' }, { to: '/shop', label: 'All Flowers' }, { to: '/contact', label: 'Contact' } ].map(({ to, label }) => (
-              <Link key={to} to={to} className={`block px-3 py-3 rounded-xl text-[13px] font-medium transition-colors ${isActive(to) ? 'bg-[#eaf0e2] text-[#2e3c27]' : 'text-[#3a3830] hover:bg-[#f2f7ec]'}`}>{label}</Link>
-            ))}
-            <div className="pt-4 pb-1.5 px-3"><p className="text-[9px] font-bold uppercase tracking-[0.24em] text-[#8aaa78]">Collections</p></div>
-            {CATEGORIES.map(cat => (
-              <Link key={cat} to={`/shop?category=${cat}`} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] text-[#445038] hover:bg-[#f2f7ec] hover:text-[#2e3c27] transition-colors">
-                {cat}<span className="text-[#b0c8a0] text-xs">→</span>
-              </Link>
-            ))}
-          </div>
-          <div className="p-4 border-t border-[#dce8d0] bg-[#f2f7ec] space-y-2.5">
-            <a href="https://wa.me/918921123759" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 w-full bg-[#2e3c27] text-white py-3 rounded-xl text-[13px] font-semibold hover:bg-[#233020] transition-colors">💬&nbsp; WhatsApp Order</a>
-            <div className="flex items-center justify-center gap-1.5 text-[10px] text-[#8aaa78]"><FiPhone size={10} /><a href="tel:+918921123759" className="hover:text-[#2e3c27] transition-colors">+91 89211 23759</a></div>
-          </div>
-        </div>
-      </div>
     </>
   );
 });
 
 Nav.displayName = 'Nav';
 export default Nav;
-
-
-
